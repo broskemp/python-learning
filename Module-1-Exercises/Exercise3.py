@@ -30,7 +30,7 @@ else:
     print("Invalid cabin class.")
 
 # Ask for biological sex and hemoglobin value (g/l)
-# The program notifies if the value is high, low or normal
+# The program notifies if the value is high, low or normal.
 # Normal value for males - 134-167 g/l
 # Normal value for females - 117-155 g/l
 

@@ -1,13 +1,55 @@
-import random
-code3 = random.randint(1, 10**3)
-code3gen = '{:03}'.format(code3)
-code4 = random.randint(1, 10**4)
-code4gen = '{:04}'.format(code4)
+student = {
+    "name" : "Timo",
+    "age" : 20,
+    "grade" : "A",
+    "courses" : ["Math", "Physics", "Programming"]
+}
 
-answer = int(input("How long of a code would you like to generate? 3 or 4? = "))
-if answer == 3:
-    print(f"Your 3 digit code is {code3gen}")
-elif answer == 4:
-    print(f"Your 4 digit code is {code4gen}")
+# Accessing dictionary values:
+print("Name: ", student["name"])
+print("courses: ", student["courses"])
+
+student["age"] = 25
+student["courses"].append("language")
+student["city"] = "Espoo"
+
+# Iterating through the dictionary
+for key, value in student.items():
+    print(key + " :", value)
+
+del student["grade"]
+# checking if a key exists in the dictionary
+
+if "age" in student:
+    print("Age: ", student["age"])
 else:
-    print("Please enter 3 or 4.")
+    print("Age not found in the dictionary")
+
+
+shopping = {
+    "milk" : 2,
+    "rice" : 3,
+    "oats" : 4,
+}
+
+def addshopping(item, quantity):
+    shopping.append(item, quantity)
+
+def removeshopping(item, quantity):
+    shopping.remove(item, quantity)
+
+def displayshopping():
+    for item, quantity in shopping.items():
+        print(item + ": " + quantity)
+
+print("What would you like to do with your shopping list?")
+print("1. Add an item")
+print("2. Remove an item")
+print("3. Display the shopping list")
+print("4. Quit")
+shoppinglist = input("Enter your choice 1/2/3/4 : ")
+
+if shoppinglist == 1:
+    addshopping(input("What would you like to add to your list?: "))
+    print(f"You have added {addshopping} to your list")
+

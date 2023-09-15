@@ -93,4 +93,4 @@ else:
 
 # the 6th task I genuinely can't figure out - looking it up online the code needs
 # the iteration function "for" and "in", which I don't know how they work just yet
-# therefore, i'll try this again in exercise5.py
+# i'll try this again in exercise5.py

@@ -45,4 +45,25 @@ remove_odd(numbers)
 print(f"Here is the list but with only even numbers : {remove_odd(numbers)}")
 
 
-# write a function that
+# write a function that receives two parameters : diameter of pizza in cm and price of pizza in eur
+# the function calculates and returns the unit price of the pizza per square meter
+# main program asks the user of the diameter and price of two pizzas, and says which one has more value
+
+def pizzacalculator():
+    pizzadiameter = int(input("Enter the diameter of pizza in cm : ")) * 3.14
+    pizzaprice = float(input("Enter the price of pizza in euros : "))
+    unitprice = pizzadiameter / pizzaprice
+    return unitprice
+
+
+print("Loading calculations for Pizza 1 ...")
+Pizza1 = pizzacalculator()
+print("Loading calculations for Pizza 2 ...")
+Pizza2 = pizzacalculator()
+
+if Pizza1 > Pizza2:
+    print("Pizza 1 is a better deal than Pizza 2")
+elif Pizza1 == Pizza2:
+    print("Both pizzas are equally worth it")
+else:
+    print("Pizza 2 is a better deal than Pizza 1")

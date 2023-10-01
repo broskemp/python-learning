@@ -1,55 +1,49 @@
-student = {
-    "name" : "Timo",
-    "age" : 20,
-    "grade" : "A",
-    "courses" : ["Math", "Physics", "Programming"]
-}
-
-# Accessing dictionary values:
-print("Name: ", student["name"])
-print("courses: ", student["courses"])
-
-student["age"] = 25
-student["courses"].append("language")
-student["city"] = "Espoo"
-
-# Iterating through the dictionary
-for key, value in student.items():
-    print(key + " :", value)
-
-del student["grade"]
-# checking if a key exists in the dictionary
-
-if "age" in student:
-    print("Age: ", student["age"])
-else:
-    print("Age not found in the dictionary")
-
 
 shopping = {
-    "milk" : 2,
-    "rice" : 3,
-    "oats" : 4,
+    "MILK": 2,
+    "RICE": 3,
+    "OATS": 4,
 }
 
-def addshopping(item, quantity):
-    shopping.append(item, quantity)
 
-def removeshopping(item, quantity):
-    shopping.remove(item, quantity)
+def addshopping(item, quantity):
+    shopping[item] = quantity
+
+
+def removeshopping(item):
+    del shopping[item]
+
 
 def displayshopping():
     for item, quantity in shopping.items():
-        print(item + ": " + quantity)
+        print(item, ": ", quantity)
 
-print("What would you like to do with your shopping list?")
-print("1. Add an item")
-print("2. Remove an item")
-print("3. Display the shopping list")
-print("4. Quit")
-shoppinglist = input("Enter your choice 1/2/3/4 : ")
 
-if shoppinglist == 1:
-    addshopping(input("What would you like to add to your list?: "))
-    print(f"You have added {addshopping} to your list")
-
+while True:
+    print("What would you like to do with your shopping list?")
+    print("1. Add an item")
+    print("2. Remove an item")
+    print("3. Display the shopping list")
+    print("4. Quit")
+    shoppinglist = int(input("Enter your choice 1/2/3/4 : "))
+    if shoppinglist == 1:
+        addshopitem = input("What would you like to add to your list?: ").upper()
+        addshopquantity = int(input("How much of this item would you like to add? : "))
+        print(f"You have added {addshopitem} (amount = {addshopquantity}) to your list")
+        addshopping(addshopitem, addshopquantity)
+        if addshopitem == "":
+            break
+    elif shoppinglist == 2:
+        removeshopitem = input("What would you like to remove from your list? : ").upper()
+        if removeshopitem in shopping:
+            print(f"You have removed {removeshopitem} from your list.")
+            removeshopping(removeshopitem)
+        else:
+            print("This item is not in the shopping list.")
+    elif shoppinglist == 3:
+        displayshopping()
+    elif shoppinglist == 4:
+        break
+    else:
+        print("Please enter 1, 2, 3 or 4.")
+print("Enjoy shopping! Ending sequence.")

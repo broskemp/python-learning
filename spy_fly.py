@@ -91,8 +91,8 @@ def location_goal(game_id, location):
 def airport_distance(starting, end):
     start = get_airport_info(starting)
     ending = get_airport_info(end)
-    start_coordinates = (start['latitude_deg'], start['longitude_deg'])
-    end_coordinates = (ending['latitude_deg'], ending['longitude_deg'])
+    start_coordinates = (start[0]['latitude_deg'], start[0]['longitude_deg'])
+    end_coordinates = (ending[0]['latitude_deg'], ending[0]['longitude_deg'])
 
     return int(distance.distance(start_coordinates, end_coordinates).km)
 
@@ -123,15 +123,26 @@ def is_path_game_won(path_choice):
         return True
 
 
-# get data from game table
-def game_data(game_id):
-    sql = ("SELECT * FROM GAME"
-           f" WHERE ID = {game_id}")
+# insert points for player SUNNY condition
+def gain_points_sunny(game_id):
+    sql = ("UPDATE game"
+           f" WHERE ID = {game_id} SET score = score + 5")
     cursor = connection.cursor(dictionary=True)
     cursor.execute(sql)
-    result = cursor.fetchall()
-    return result
 
+
+def gain_points_cloudy(game_id):
+    sql = ("UPDATE game"
+           f" WHERE ID = {game_id} SET score = score + 10")
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(sql)
+
+
+def gain_points_suspicious(game_id):
+    sql = ("UPDATE game"
+           f" WHERE ID = {game_id} SET score = score + 15 AND SET battery_power = battery_power + 500")
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(sql)
 
 
 # GAME SETTINGS
@@ -141,6 +152,11 @@ player = input("type your name: ")
 game_over = False
 win = False
 
+# start battery = 6000
+battery = 6000
+
+# start score = 0
+score = 0
 
 # all airports & level selection
 print("Select your continent ")
@@ -165,14 +181,35 @@ game_id = new_game(player, current_airport, all_airports)
 while not game_over:
     # get current airport info
     airport = get_airport_info(current_airport)
-    # get game info
-    status = game_data(game_id)
     # fetch game status
     print(f"You are at {airport[0]['name']}.")
-    print(f"You have {status[0]['battery_power']}km of range in your battery.")
+    print(f"You have {battery}km of range in your battery.")
     # pause
     input("Press enter to continue.")
-    # check goal in the location
-    goal = location_goal(game_id, current_airport)
-    if {goal[0]['name']} == "Sunny":
 
+    # if no battery power, game over
+    # show airports in range. if none, game over
+    airports = airports_in_range(current_airport, all_airports, battery)
+    print(f"There are {len(airports)} airports in range: ")
+    if len(airports) == 0:
+        print("You have no more airports in range.")
+        game_over = True
+    else:
+        print("Airports:")
+        for airport in airports:
+            ap_distance = airport_distance(current_airport, airport['ident'])
+            print(f"{airport['name']}, icao: {airport['ident']}, distance: {ap_distance:.0f}km")
+        # ask for destination
+        dest = input("Enter the ICAO of the destination you would like to go to: ").upper()
+        selected_distance = airport_distance(current_airport, dest)
+        battery -= selected_distance
+        location_update(dest, battery, game_id)
+        current_airport = dest
+        if battery < 0:
+            game_over = True
+
+# if game is over the loop stops
+if win:
+    print(f"You won! You have gathered {score} points worth of information")
+else:
+    print(f"You lose, you have gathered {score} points worth of information. This is not enough!")

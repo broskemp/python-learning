@@ -108,10 +108,10 @@ def airports_in_range(icao, airports, remaining_battery):
 
 
 # update location
-def location_update(icao, bat_power, score):
+def location_update(icao, bat_power, score, id):
     sql = f"update game set location = %s, battery_power = %s, score = %s where id = %s;"
     cursor = connection.cursor(dictionary=True)
-    cursor.execute(sql, (icao, bat_power, score))
+    cursor.execute(sql, (icao, bat_power, score, id))
 
 
 # Formulate messages in the main
@@ -200,10 +200,10 @@ while not game_over:
             ap_distance = airport_distance(current_airport, airport['ident'])
             print(f"{airport['name']}, icao: {airport['ident']}, distance: {ap_distance:.0f}km")
         # ask for destination
-        dest = input("Enter the ICAO of the destination you would like to go to: ").upper()
+        dest = input("Enter the ICAO of the destination you would like to go to: ")
         selected_distance = airport_distance(current_airport, dest)
         battery -= selected_distance
-        location_update(dest, battery, game_id)
+        location_update(dest, battery, score, game_id)
         current_airport = dest
         if battery < 0:
             game_over = True

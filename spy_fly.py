@@ -187,6 +187,19 @@ while not game_over:
     # pause
     input("Press enter to continue.")
 
+    # goal stuff
+    goal = location_goal(game_id, current_airport)
+    if goal:
+        print("Yippee!!!! happy happy happy")
+        if goal == :
+            score = score + 5
+        elif goal == :
+            score = score + 10
+        elif goal == :
+            score = score + 15
+        else:
+            print("You have been caught!")
+            game_over = True
     # if no battery power, game over
     # show airports in range. if none, game over
     airports = airports_in_range(current_airport, all_airports, battery)
@@ -207,6 +220,9 @@ while not game_over:
         current_airport = dest
         if battery < 0:
             game_over = True
+
+if score >= 100:
+    win = True
 
 # if game is over the loop stops
 if win:

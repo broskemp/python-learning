@@ -62,7 +62,7 @@ def new_game(player_name, current_airport, all_airports):
 
 # Get airport information
 def get_airport_info(icao):
-    sql = " select country.name, ident, airport.name, latitude_deg, longitude_deg from airport, country "
+    sql = " select country.name , ident, airport.name, latitude_deg, longitude_deg from airport, country "
     sql += " where airport.iso_country = country.iso_country and ident = '" + icao + "'"
     cursor = connection.cursor(dictionary=True)
     cursor.execute(sql)
@@ -172,15 +172,38 @@ while not game_over:
             print("The airport is clear and sunny. You gain 5 points.")
             score = score + 5
         elif goal['goal'] == 2:
-            print("The airport is cloudy. You gain 10 points for your risky actions.")
-            score = score + 10
+            if battery - 50 < 0:
+                print(
+                    f"Oh no, the weather in {airport[0]['name']} looks bad. Your remaining battery range cannot get you there. You have to do an emergency landing.")
+                battery = 0
+                game_over = True
+                break
+            else:
+                print(
+                    f"The weather in {airport[0]['name']} is Cloudy. You get 10 points. But you spend 50km extra range.")
+                battery = battery - 50
+                score = score + 10
         elif goal['goal'] == 3:
-            print("The airport seems to be suspicious of you. You gain 15 points and 500km of battery.")
-            score = score + 15
-            battery = battery + 600
+                user_choice = input(
+                    "There is a charging point nearby, but this airport seems to be suspicious. Would you like to take the risk,"
+                    "choose a path and try to get to the charging point? If you choose to escape, "
+                    "you can't come back to this airport again\nChoose Y/N: ").upper()
+                if user_choice == "N":
+                    print("You did not take the risk, but lost the resources used to travel")
+                elif user_choice == "Y":
+                    path_choice = int(input("Choose a path 1-5: "))
+                    if is_path_game_won(path_choice):
+                        print("Your path was successful! You got 600 extra battery power and 15 points")
+                        battery += 600
+                        score += 15
+                    else:
+                        print("Wrong answer! You have been caught!")
+                        game_over = True
+                        break
         else:
             print("This airport was expecting you. You have been caught!")
             game_over = True
+            break
 
     # pause
     input("Press Enter to continue.")

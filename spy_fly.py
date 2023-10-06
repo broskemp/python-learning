@@ -123,28 +123,6 @@ def is_path_game_won(path_choice):
         return True
 
 
-# insert points for player SUNNY condition
-def gain_points_sunny(game_id):
-    sql = ("UPDATE game"
-           f" WHERE ID = {game_id} SET score = score + 5")
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute(sql)
-
-
-def gain_points_cloudy(game_id):
-    sql = ("UPDATE game"
-           f" WHERE ID = {game_id} SET score = score + 10")
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute(sql)
-
-
-def gain_points_suspicious(game_id):
-    sql = ("UPDATE game"
-           f" WHERE ID = {game_id} SET score = score + 15 AND SET battery_power = battery_power + 500")
-    cursor = connection.cursor(dictionary=True)
-    cursor.execute(sql)
-
-
 # GAME SETTINGS
 print("When you are ready to start, ")
 player = input("type your name: ")
@@ -190,16 +168,22 @@ while not game_over:
     # goal stuff
     goal = location_goal(game_id, current_airport)
     if goal:
-        print("Yippee!!!! happy happy happy")
-        if goal == :
+        if goal['goal'] == 1:
+            print("The airport is clear and sunny. You gain 5 points.")
             score = score + 5
-        elif goal == :
+        elif goal['goal'] == 2:
+            print("The airport is cloudy. You gain 10 points for your risky actions.")
             score = score + 10
-        elif goal == :
+        elif goal['goal'] == 3:
+            print("The airport seems to be suspicious of you. You gain 15 points and 500km of battery.")
             score = score + 15
+            battery = battery + 600
         else:
-            print("You have been caught!")
+            print("This airport was expecting you. You have been caught!")
             game_over = True
+
+    # pause
+    input("Press Enter to continue.")
     # if no battery power, game over
     # show airports in range. if none, game over
     airports = airports_in_range(current_airport, all_airports, battery)

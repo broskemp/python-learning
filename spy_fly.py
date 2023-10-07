@@ -109,12 +109,17 @@ def airport_distance(starting, end):
 
 
 # get airports in range:
-def airports_in_range(icao, airports, remaining_battery):
+def airports_in_range(icao, airports, remaining_battery,game_id):
     in_range = []
-    for airport in airports:
-        distance = airport_distance(icao, airport['ident'])
-        if (distance <= remaining_battery and not distance == 0):
-            in_range.append(airport)
+    for i, airport in enumerate(airports):
+        if(i>=1):
+            distance = airport_distance(icao, airport['ident'])
+            sql = (f"SELECT visited FROM spying_location WHERE game = %s AND airport = %s;")
+            cursor = connection.cursor()
+            cursor.execute(sql,(game_id,airport['ident']))
+            airport_visited = cursor.fetchone()
+            if (distance <= remaining_battery and not distance == 0 and not airport_visited[0] == 1):
+                in_range.append(airport)
     return in_range
 
 
@@ -228,7 +233,7 @@ while not game_over:
     input("Press Enter to continue.")
     # if no battery power, game over
     # show airports in range. if none, game over
-    airports = airports_in_range(current_airport, all_airports, battery)
+    airports = airports_in_range(current_airport, all_airports, battery,game_id)
     print(f"There are {len(airports)} airports in range: ")
     if len(airports) == 0:
         print("You have no more airports in range.")

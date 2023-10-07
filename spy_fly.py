@@ -208,7 +208,9 @@ while not game_over:
             if user_choice == "N":
                 print("You did not take the risk, but lost the resources used to travel")
             elif user_choice == "Y":
-                path_choice = int(input("Choose a path 1-5: "))
+                path_choice = input('Choose a path 1 - 5: ')
+                while not (path_choice.isdigit() and 1 <= int(path_choice) <= 5):
+                    path_choice = input('Please enter a path # from 1 to 5: ')
                 if path_game_won(path_choice):
                     print("Your path was successful! You got 600 extra battery power and 15 points")
                     battery += 600
@@ -239,7 +241,13 @@ while not game_over:
                 print(f"{airport['name']}, icao: {airport['ident']}, distance: {ap_distance:.0f}km")
 
         # ask for destination
-        dest = input("Enter the ICAO of the destination you would like to go to: ")
+        while True:
+            airport_codes = [dict['ident'] for dict in airports]
+            dest = input("Enter the ICAO of the destination you would like to go to: ").upper()
+            if dest in airport_codes:
+                break
+            else:
+                print("Please enter a correct ICAO.")
         selected_distance = airport_distance(current_airport, dest)
         battery -= selected_distance
         location_update(dest, battery, score, game_id)

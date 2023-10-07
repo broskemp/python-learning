@@ -109,12 +109,17 @@ def airport_distance(starting, end):
 
 
 # get airports in range:
-def airports_in_range(icao, airports, remaining_battery):
+def airports_in_range(icao, airports, remaining_battery,game_id):
     in_range = []
-    for airport in airports:
-        distance = airport_distance(icao, airport['ident'])
-        if (distance <= remaining_battery and not distance == 0):
-            in_range.append(airport)
+    for i, airport in enumerate(airports):
+        if(i>=1):
+            distance = airport_distance(icao, airport['ident'])
+            sql = (f"SELECT visited FROM spying_location WHERE game = %s AND airport = %s;")
+            cursor = connection.cursor()
+            cursor.execute(sql,(game_id,airport['ident']))
+            airport_visited = cursor.fetchone()
+            if (distance <= remaining_battery and not distance == 0 and not airport_visited[0] == 1):
+                in_range.append(airport)
     return in_range
 
 
@@ -132,6 +137,15 @@ def path_game_won(path_choice):
         return False
     else:
         return True
+
+
+# Y or N for the minigame
+def yes_or_no(question: str) -> bool:
+    while True:
+        answer = input(question).upper()
+        if answer in ("Y", "N"):
+            return answer == "Y"
+        print("Invalid input.")
 
 
 # GAME SETTINGS
@@ -198,16 +212,13 @@ while not game_over:
                     f"The weather in {airport[0]['name']} is Cloudy. You get 10 points,but you spend 50km extra range.")
                 battery = battery - 50
                 score = score + 10
-            score = score + 10
         elif goal['goal'] == 3:
-            user_choice = input("There is a charging point nearby, but this airport seems to be suspicious. "
-                                "Would you like to take the risk,"
-                                "choose a path and try to get to the charging point? "
-                                "If you choose to escape, "
-                                "you can't come back to this airport again\nChoose Y/N: ").upper()
-            if user_choice == "N":
-                print("You did not take the risk, but lost the resources used to travel")
-            elif user_choice == "Y":
+            user_choice = yes_or_no("There is a charging point nearby, but this airport seems to be suspicious. "
+                                    "Would you like to take the risk,"
+                                    "choose a path and try to get to the charging point? "
+                                    "If you choose to escape, "
+                                    "you can't come back to this airport again\nChoose Y/N: ")
+            if user_choice:
                 path_choice = input('Choose a path 1 - 5: ')
                 while not (path_choice.isdigit() and 1 <= int(path_choice) <= 5):
                     path_choice = input('Please enter a path # from 1 to 5: ')
@@ -219,6 +230,8 @@ while not game_over:
                 else:
                     game_over = True
                     break
+            else:
+                print("You did not take the risk, but lost the resources used to travel")
         else:
             print("This airport was expecting you. You have been caught!")
             game_over = True
@@ -228,7 +241,7 @@ while not game_over:
     input("Press Enter to continue.")
     # if no battery power, game over
     # show airports in range. if none, game over
-    airports = airports_in_range(current_airport, all_airports, battery)
+    airports = airports_in_range(current_airport, all_airports, battery,game_id)
     print(f"There are {len(airports)} airports in range: ")
     if len(airports) == 0:
         print("You have no more airports in range.")

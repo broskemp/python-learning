@@ -133,7 +133,7 @@ def location_update(icao, bat_power, score, id):
 # Formulate messages in the main
 def path_game_won(path_choice):
     rand_path = random.randint(1, 5)
-    if path_choice == rand_path:
+    if int(path_choice) == rand_path:
         return False
     else:
         return True

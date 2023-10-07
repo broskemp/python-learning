@@ -1,7 +1,7 @@
 import random
 from geopy import distance
-
 import mysql.connector
+import spy_fly_story
 
 connection = mysql.connector.connect(
     host='localhost',
@@ -157,6 +157,11 @@ def get_rank():
     return result
 
 
+storyDialog = input('Do you want to read the background story? Y/N: ').upper()
+if storyDialog == 'Y':
+    for line in spy_fly_story.get_story():
+        print(line)
+
 # GAME SETTINGS
 print("When you are ready to start, ")
 player = input("type your name: ")
@@ -171,9 +176,12 @@ battery = 6000
 score = 0
 
 # all airports & level selection
-print("Select your continent ")
+print("Select your continent, "
+      "\nEU - Europe (Easy)"
+      "\nAF - Africa (Medium)"
+      "\nAS - Asia (Hard)")
 while True:
-    continent = input("AS/AF/EU : ").upper()
+    continent = input("EU/AF/AS : ").upper()
     if continent == "AS" or continent == "AF" or continent == "EU":
         break
     else:
@@ -223,10 +231,11 @@ while not game_over:
                 score = score + 10
         elif goal['goal'] == 3:
             user_choice = yes_or_no("There is a charging point nearby, but this airport seems to be suspicious. "
-                                    "Would you like to take the risk,"
-                                    "choose a path and try to get to the charging point? "
-                                    "If you choose to escape, "
-                                    "you can't come back to this airport again\nChoose Y/N: ")
+                                    "\nWould you like to take the risk,"
+                                    "\nchoose a path and try to get to the charging point? "
+                                    "\nIf not, then the only way forward is to leave and"
+                                    "\nyou will not be able to come back to this airport again."
+                                    "\nChoose if you want to take the risk Y/N: ")
             if user_choice:
                 path_choice = input('Choose a path 1 - 5: ')
                 while not (path_choice.isdigit() and 1 <= int(path_choice) <= 5):

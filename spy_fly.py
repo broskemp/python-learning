@@ -62,7 +62,7 @@ def new_game(player_name, current_airport, all_airports):
 
 # Get airport information
 def get_airport_info(icao):
-    sql = " select country.name , ident, airport.name, latitude_deg, longitude_deg from airport, country "
+    sql = " select country.name, ident, airport.name, latitude_deg, longitude_deg from airport, country "
     sql += " where airport.iso_country = country.iso_country and ident = '" + icao + "'"
     cursor = connection.cursor(dictionary=True)
     cursor.execute(sql)
@@ -76,6 +76,17 @@ def airport_visited(game, airport):
     cursor = connection.cursor(dictionary=True)
     cursor.execute(sql, (game, airport))
 
+# Check if airport is visited
+def is_visited(game, airport):
+    sql = f"select visited from spying_location where game = %s and airport = %s"
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(sql, (game, airport))
+    result = cursor.fetchone()
+
+    if result == ({'visited': 1}):
+        return False
+    else:
+        return True
 
 # What goal is in the location
 def location_goal(game_id, location):
@@ -115,7 +126,7 @@ def location_update(icao, bat_power, score, id):
 
 
 # Formulate messages in the main
-def is_path_game_won(path_choice):
+def path_game_won(path_choice):
     rand_path = random.randint(1, 5)
     if path_choice == rand_path:
         return False
@@ -155,6 +166,9 @@ current_airport = start_airport
 # game id
 game_id = new_game(player, current_airport, all_airports)
 
+# sets start airport as visited
+airport_visited(game_id, current_airport)
+
 # GAME LOOP
 while not game_over:
     # get current airport info
@@ -163,7 +177,7 @@ while not game_over:
     print(f"You are at {airport[0]['name']}.")
     print(f"You have {battery}km of range in your battery.")
     # pause
-    input("Press enter to continue.")
+    input("Press Enter to continue.")
 
     # goal stuff
     goal = location_goal(game_id, current_airport)
@@ -174,38 +188,41 @@ while not game_over:
         elif goal['goal'] == 2:
             if battery - 50 < 0:
                 print(
-                    f"Oh no, the weather in {airport[0]['name']} looks bad. Your remaining battery range cannot get you there. You have to do an emergency landing.")
+                    f"Oh no, the weather in {airport[0]['name']} looks bad. "
+                    f"Your remaining battery range cannot get you there. You have to do an emergency landing.")
                 battery = 0
                 game_over = True
                 break
             else:
                 print(
-                    f"The weather in {airport[0]['name']} is Cloudy. You get 10 points. But you spend 50km extra range.")
+                    f"The weather in {airport[0]['name']} is Cloudy. You get 10 points,but you spend 50km extra range.")
                 battery = battery - 50
                 score = score + 10
+            score = score + 10
         elif goal['goal'] == 3:
-                user_choice = input(
-                    "There is a charging point nearby, but this airport seems to be suspicious. Would you like to take the risk,"
-                    "choose a path and try to get to the charging point? If you choose to escape, "
-                    "you can't come back to this airport again\nChoose Y/N: ").upper()
-                if user_choice == "N":
-                    print("You did not take the risk, but lost the resources used to travel")
-                elif user_choice == "Y":
-                    path_choice = int(input("Choose a path 1-5: "))
-                    if is_path_game_won(path_choice):
-                        print("Your path was successful! You got 600 extra battery power and 15 points")
-                        battery += 600
-                        score += 15
-                    else:
-                        print("Wrong answer! You have been caught!")
-                        game_over = True
-                        break
+            user_choice = input("There is a charging point nearby, but this airport seems to be suspicious. "
+                                "Would you like to take the risk,"
+                                "choose a path and try to get to the charging point? "
+                                "If you choose to escape, "
+                                "you can't come back to this airport again\nChoose Y/N: ").upper()
+            if user_choice == "N":
+                print("You did not take the risk, but lost the resources used to travel")
+            elif user_choice == "Y":
+                path_choice = int(input("Choose a path 1-5: "))
+                if path_game_won(path_choice):
+                    print("Your path was successful! You got 600 extra battery power and 15 points")
+                    battery += 600
+                    score += 15
+                    print(f"You now have {battery} km of range in your battery.")
+                else:
+                    game_over = True
+                    break
         else:
             print("This airport was expecting you. You have been caught!")
             game_over = True
             break
 
-    # pause
+# pause
     input("Press Enter to continue.")
     # if no battery power, game over
     # show airports in range. if none, game over
@@ -217,14 +234,17 @@ while not game_over:
     else:
         print("Airports:")
         for airport in airports:
-            ap_distance = airport_distance(current_airport, airport['ident'])
-            print(f"{airport['name']}, icao: {airport['ident']}, distance: {ap_distance:.0f}km")
+            if is_visited(game_id, airport['ident']):
+                ap_distance = airport_distance(current_airport, airport['ident'])
+                print(f"{airport['name']}, icao: {airport['ident']}, distance: {ap_distance:.0f}km")
+
         # ask for destination
         dest = input("Enter the ICAO of the destination you would like to go to: ")
         selected_distance = airport_distance(current_airport, dest)
         battery -= selected_distance
         location_update(dest, battery, score, game_id)
         current_airport = dest
+        airport_visited(game_id, current_airport)
         if battery < 0:
             game_over = True
 

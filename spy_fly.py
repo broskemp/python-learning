@@ -245,9 +245,8 @@ while not game_over:
             print("This airport was expecting you. You have been caught!")
             game_over = True
             break
+        input("Press Enter to continue.")
 
-# pause
-    input("Press Enter to continue.")
     # if no battery power, game over
     # show airports in range. if none, game over
     airports = airports_in_range(current_airport, all_airports, battery,game_id)

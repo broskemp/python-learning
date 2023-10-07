@@ -147,6 +147,14 @@ def yes_or_no(question: str) -> bool:
             return answer == "Y"
         print("Invalid input.")
 
+#Retrive the data of top 10 players in the game
+def get_rank():
+    sql = ("SELECT id,screen_name,score FROM game WHERE score >=100 ORDER BY score DESC limit 10;")
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    return result
+
 
 # GAME SETTINGS
 print("When you are ready to start, ")
@@ -275,5 +283,9 @@ if score >= 100:
 # if game is over the loop stops
 if win:
     print(f"You won! You have gathered {score} points worth of information")
+    win_lists = get_rank()
+    for win_list in win_lists:
+        if game_id == win_list['id']:
+            print(f"Congratulations, you are in the top 10 rank and you rank as No.{win_lists.index(win_list)+1} in the list.")
 else:
     print(f"You lose, you have gathered {score} points worth of information. This is not enough!")

@@ -147,7 +147,8 @@ def yes_or_no(question: str) -> bool:
             return answer == "Y"
         print("Invalid input.")
 
-#Retrive the data of top 10 players in the game
+
+# Retrieve the data of top 10 players in the game
 def get_rank():
     sql = ("SELECT id,screen_name,score FROM game WHERE score >=100 ORDER BY score DESC limit 10;")
     cursor = connection.cursor(dictionary=True)

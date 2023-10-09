@@ -208,7 +208,7 @@ while not game_over:
     print(f"You are at {airport[0]['name']}.")
     print(f"You have {battery}km of range in your battery.")
     # pause
-    input("Press Enter to continue.")
+    input("\nPress Enter to continue.")
 
     # goal stuff
     goal = location_goal(game_id, current_airport)
@@ -254,12 +254,12 @@ while not game_over:
             print("This airport was expecting you. You have been caught!")
             game_over = True
             break
-        input("Press Enter to continue.")
+        input("\nPress Enter to continue.")
 
     # if no battery power, game over
     # show airports in range. if none, game over
     airports = airports_in_range(current_airport, all_airports, battery,game_id)
-    print(f"There are {len(airports)} airports in range: ")
+    print(f"\nThere are {len(airports)} airports in range: ")
     if len(airports) == 0:
         print("You have no more airports in range.")
         game_over = True
@@ -273,7 +273,7 @@ while not game_over:
         # ask for destination
         while True:
             airport_codes = [dict['ident'] for dict in airports]
-            dest = input("Enter the ICAO of the destination you would like to go to: ").upper()
+            dest = input("\nEnter the ICAO of the destination you would like to go to: ").upper()
             if dest in airport_codes:
                 break
             else:

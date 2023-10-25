@@ -15,6 +15,12 @@ class Car:
     def drive(self, hours):
         self.travelled_distance = self.travelled_distance + (self.current_speed * hours)
 
+class Race:
+    def __init__(self, name, distance, car_list):
+        self.name = name
+        self.distance = distance
+        self.car_list = car_list
+
 
 cars = [Car(f"ABC-{i}", random.randint(100, 200)) for i in range(1, 11)]
 race_over = False

@@ -71,3 +71,5 @@ BobW.run_elevator(2, 10)
 BobW.run_elevator(0, 1)
 
 BobW.fire_alarm()
+
+# The last task for the exercise is in the Exercise9.py file, also linked in the submission

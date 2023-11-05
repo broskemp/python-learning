@@ -15,6 +15,19 @@ class Car:
     def drive(self, hours):
         self.travelled_distance = self.travelled_distance + (self.current_speed * hours)
 
+
+class ElectricCar(Car):
+    def __init__(self, reg_number, max_speed, battery):
+        self.battery = battery
+        super().__init__(reg_number, max_speed)
+
+
+class GasCar(Car):
+    def __init__(self, reg_number, max_speed, gasoline):
+        self.gasoline = gasoline
+        super().__init__(reg_number, max_speed)
+
+
 class Race:
     def __init__(self, name, distance, car_list):
         self.name = name
@@ -68,7 +81,7 @@ for car in cars:
           f"Final speed: {car.current_speed:<20} "
           f"Final distance: {car.travelled_distance:<25}")
 
-# Exercise 10
+# Exercise 10 task 4
 race_cars = [create_car(f"ABC-{i}", random.randint(100, 200)) for i in range(1, 11)]
 grand_derby = Race("Grand Demolition Derby", 8000, race_cars)
 
@@ -83,3 +96,16 @@ while not grand_derby.race_finished():
 
 print("Final Race Results:")
 grand_derby.print_status()
+
+# Exercise 11 task 2
+Tesla = ElectricCar("ABC-15",180,52.5)
+Jeep = GasCar("ACD-123", 165,32.3)
+
+Tesla.accelerate(170)
+Jeep.accelerate(150)
+
+Tesla.drive(5)
+Jeep.drive(5)
+
+print(f"The Tesla has driven for {Tesla.travelled_distance} kilometers")
+print(f"The Jeep has driven for {Jeep.travelled_distance} kilometers")

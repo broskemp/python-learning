@@ -16,5 +16,3 @@ while True:
     else:
         print("Please say Y or N.")
 
-weather_request =
-weather_response =

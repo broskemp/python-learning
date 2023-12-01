@@ -1,6 +1,24 @@
 from flask import Flask, jsonify
+import mysql.connector
 
 app = Flask(__name__)
+connection = mysql.connector.connect(
+    host='localhost',
+    port=3306,
+    database='spy_fly',
+    user='root',
+    password='yuckyt0r1!',
+    autocommit=True
+)
+
+
+def get_airport_info(icao):
+    sql = " select country.name, airport.name from airport, country "
+    sql += " where airport.iso_country = country.iso_country and ident = '" + icao + "'"
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    return result
 
 
 def is_prime(number):
@@ -20,8 +38,11 @@ def check_prime(num):
 
 
 # Task 2, ICAO code of an airport, then return name and location of it in JSON
+@app.route('/airport/<icao>')
+def check_airport(icao):
+    result = {get_airport_info(icao)}
+    return jsonify(result)
 
 if __name__ == '__main__':
     app.run(debug=True)
     app.run(use_reloader=True, host='127.0.0.1', port=5000)
-

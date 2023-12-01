@@ -13,12 +13,13 @@ connection = mysql.connector.connect(
 
 
 def get_airport_info(icao):
-    sql = " select country.name, airport.name from airport, country "
+    sql = " select ident as 'ICAO', country.name as 'Name', airport.name as 'Location' from airport, country "
     sql += " where airport.iso_country = country.iso_country and ident = '" + icao + "'"
     cursor = connection.cursor(dictionary=True)
     cursor.execute(sql)
     result = cursor.fetchall()
-    return result
+    print(result[0])
+    return result[0]
 
 
 def is_prime(number):
@@ -40,8 +41,8 @@ def check_prime(num):
 # Task 2, ICAO code of an airport, then return name and location of it in JSON
 @app.route('/airport/<icao>')
 def check_airport(icao):
-    result = {get_airport_info(icao)}
-    return jsonify(result)
+    result = get_airport_info(icao)
+    return result
 
 if __name__ == '__main__':
     app.run(debug=True)

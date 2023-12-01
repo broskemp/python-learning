@@ -2,6 +2,7 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/Module-1-Exercises/Exercise8.py" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/SpyFly/SpyFlyTable.sql" dialect="MariaDB" />
     <file url="file://$PROJECT_DIR$/SpyFly/spy_fly.py" dialect="MariaDB" />
     <file url="file://$PROJECT_DIR$/testing2.py" dialect="MariaDB" />
   </component>

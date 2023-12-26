@@ -20,6 +20,8 @@ while True:
                 print(f"The per week increase for {workout} is {per_week} with a starting weight of {starting_weight}")
                 workouts.append(f"The per week increase for {workout} is {per_week} with a starting weight of {starting_weight}")
                 break
-    else:
+    elif ans == 2:
         for x in range(len(workouts)):
             print(workouts[x])
+    else:
+        print("Please enter a valid number.")

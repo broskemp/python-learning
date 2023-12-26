@@ -1,20 +1,35 @@
-class Student:
-    attending = 0
-
-    def __init__(self, name, age, degree):
-        self.name = name
-        self.age = age
-        self.degree = degree
-        Student.attending = Student.attending + 1
-
-    def change_name(self, name):
-        self.name = name
+from flask import Flask, jsonify
+from flask_cors import CORS
+import mysql.connector
 
 
-Michael = Student("Michael", 21, "Business Management")
-Ramon = Student("Ramon", 21, "Information Technology")
-Jill = Student("Jill", 24, "MedTech")
-Student.change_name(Michael, "Bill")
+app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+connection = mysql.connector.connect(
+    host='localhost',
+    port=3306,
+    database='spy_fly',
+    user='root',
+    password='yuckyt0r1!',
+    autocommit=True
+)
 
-print(f"There are {Student.attending} students attending this class")
-print(f"{Michael.name,Michael.age,Michael.degree}")
+
+def get_airport_info(icao):
+    sql = " select ident as 'ICAO', country.name as 'Name', airport.name as 'Location' from airport, country "
+    sql += " where airport.iso_country = country.iso_country and ident = '" + icao + "'"
+    cursor = connection.cursor(dictionary=True)
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    print(result[0])
+    return result[0]
+
+@app.route('/airport/<icao>')
+def check_airport(icao):
+    result = get_airport_info(icao)
+    return result
+
+if __name__ == '__main__':
+    app.run(debug=True)
+    app.run(use_reloader=True, host='127.0.0.1', port=5000)
